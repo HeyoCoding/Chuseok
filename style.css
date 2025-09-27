@@ -201,7 +201,8 @@ p{
 
 /* 푸터 */
 .foot{
-  position:absolute; bottom: max(8px, env(safe-area-inset-bottom));
+  position:static; 
+  bottom: max(8px, env(safe-area-inset-bottom));
   left:50%; transform:translateX(-50%);
   font-size:.9rem; color:#cbd6ff88; text-align:center;
 }
