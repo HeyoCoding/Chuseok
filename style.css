@@ -6,12 +6,13 @@
   --btn:#ffd54f; --btnTxt:#2b2b2b;
 }
 
-/* 9:16 세로 화면 최적화 */
+/* 초기화 & 스크롤 가로 차단 */
 html,body{
   width:100%;
   height:100%;
   overflow-x:hidden; /* 가로 스크롤 방지 */
 }
+*{box-sizing:border-box}
 body{
   font-family: ui-rounded, "Pretendard","Noto Sans KR", system-ui, -apple-system, sans-serif;
   background: radial-gradient(1200px 1600px at 70% 15%, var(--bg2), var(--bg1));
@@ -23,40 +24,39 @@ body{
   position:relative; min-height:100dvh;
   padding: max(2.4rem, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
   display:grid; place-items:center;
-  overflow:hidden;
+  overflow:hidden; /* 내부 절대요소가 밖으로 나가도 잘림 방지 */
 }
 
-/* 달/구름/별 애니메이션 크기 상향, 위치 상단 집중 */
+/* 달 */
 .moon{
-  position:absolute; 
-  top:5%; right:8%;
-  width:min(28.8vmin, 500px); 
-  height:min(28.8vmin, 500px);   /* ← 오타 수정: 500x → 500px */
-  aspect-ratio:1/1; 
+  position:absolute;
+  top:5%;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(28.8vmin, 500px);
+  height:min(28.8vmin, 500px);
+  aspect-ratio:1/1;
   border-radius:50%;
-
   background: radial-gradient(
     circle at 35% 35%,
     #fff8e1 0 40%,
     #ffe082 60%,
     #ffd54f 100%
   );
-
   box-shadow:0 0 40px 12px rgba(255,213,79,.4),
              0 0 120px 24px rgba(255,213,79,.18);
-
-  /* 두 가지 애니메이션 동시 적용 */
   animation: float 6s ease-in-out infinite,
              moonGlow 4s ease-in-out infinite;
+  max-width:100vw; /* 어떤 화면에서도 가로 초과 금지 */
 }
 
-/* 위아래 둥실둥실 */
+/* 둥실둥실 */
 @keyframes float{
-  0%,100%{ transform:translateY(0); }
-  50%    { transform:translateY(-8px); }
+  0%,100%{ transform:translate(-50%,0); }
+  50%    { transform:translate(-50%,-8px); }
 }
 
-/* 반짝이는 효과 */
+/* 반짝임 */
 @keyframes moonGlow{
   0%,100%{
     box-shadow:0 0 40px 12px rgba(255,213,79,.4),
@@ -70,36 +70,38 @@ body{
   }
 }
 
-
-
+/* 구름 */
 .cloud{
   position:absolute;
-  top:14%; left:-30vw;
+  top:14%;
+  left:50%;
+  transform:translateX(-80%);
   width:70vw;
-  /* height:auto;  ← 이거 제거 */
-  height: clamp(144px, 21.6vw, 312px);   /* ✅ 요소 높이 부여 */
+  height: clamp(144px, 21.6vw, 312px);
   background-image: url("images/cloud.png");
   background-size: contain;
   background-repeat: no-repeat;
   animation: drift 30s linear infinite;
   opacity:.5;
-  z-index: 1;
+  z-index:1;
+  max-width:100vw;
 }
 .cloud.two{
   top:22%;
-  left:-40vw;
-   width:72vw;   /* 60 × 1.2 */
+  left:50%;
+  transform:translateX(5%);
+  width:72vw;
   height: clamp(120px, 19.2vw, 264px);
   animation: drift 38s linear infinite;
   opacity:.55;
+  max-width:100vw;
 }
 
+/* 부드러운 이동(화면을 넘기지 않도록 130→105) */
 @keyframes drift{
   from { transform: translateX(0); }
-  to   { transform: translateX(130vw); }  /* ✅ transform 기반 이동이 더 매끄러움 */
+  to   { transform: translateX(105vw); }
 }
-
-
 
 /* 별 */
 .stars i{
@@ -117,23 +119,27 @@ body{
     radial-gradient(110% 60% at 110% 120%, #253a7a 0 60%, transparent 61%);
   filter: drop-shadow(0 -8px 24px #0006);
 }
+
+/* 카드 + 토끼 래퍼 */
 .card-wrap{
   display:flex;
-  justify-content:center;   /* 가운데 정렬 */
-  align-items:center;       /* 세로 정렬 맞춤 */
-  gap:20px;                 /* 토끼와 카드 사이 간격 */
+  justify-content:center;
+  align-items:center;
+  gap:20px;
   position:relative;
-  z-index:2;                /* 배경 요소보다 위 */
-  flex-wrap:wrap;           /* 모바일에서 자동 줄바꿈 */
+  z-index:2;
+  flex-wrap:wrap; /* 줄바꿈으로 자동 반응형 */
 }
 
+/* 토끼 */
 .rabbit{
-  width:min(31.2vmin, 200px);  /* 크기 적절히 */
+  width:min(31.2vmin, 200px);
   animation: pound 1.2s ease-in-out infinite, shine 2s ease-in-out infinite;
-  margin-top:150px; 
+  margin-top:10vh;
+  max-width:100vw;
 }
 
-/* 반짝임 애니메이션 */
+/* 반짝임 */
 @keyframes shine {
   0%, 100% {
     filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3))
@@ -146,7 +152,7 @@ body{
 }
 @keyframes pound{0%{transform:translateY(0)}50%{transform:translateY(-3px)}100%{transform:translateY(0)}}
 
-/* 카드 : 세로 가독성 위해 크게, 버튼 세로 정렬 */
+/* 카드 */
 .card{
   position:relative; z-index:2; text-align:center;
   width:min(92vw, 540px);
@@ -174,7 +180,7 @@ p{
   font-size: clamp(1rem, 2.1vh, 1.1rem);
 }
 
-/* 버튼 : 터치 영역 크게, 세로 스택 */
+/* 버튼 */
 .btns{display:flex; flex-direction:column; gap:12px; align-items:center}
 .btn{
   width:min(92%, 420px);
@@ -193,48 +199,43 @@ p{
 }
 .btn:active{transform: translateY(1px)}
 
+/* 푸터 */
 .foot{
   position:absolute; bottom: max(8px, env(safe-area-inset-bottom));
   left:50%; transform:translateX(-50%);
-  font-size:.9rem; color:#cbd6ff88
+  font-size:.9rem; color:#cbd6ff88; text-align:center;
 }
 
-/* 작은 기기(가로 360~390px)에서 카드가 너무 크지 않게 */
+/* 작은 기기(가로 360~390px)에서 전체 요소 중앙 유지 */
 @media (max-width: 400px){
-  .rabbit{left:3vw}
-  .moon{right:6%}
+  .moon{top:6%}
 }
 
-
-/* 모바일에서 균형 맞추기 */
+/* 모바일 추가 최적화 */
 @media (max-width:600px){
-  /* 달: 가운데 윗부분에 정렬 + 화면 밖으로 안나가게 */
+  /* 달: 중앙 + 화면 초과 방지 */
   .moon{
-    left:50%; right:auto; top:6%;
-    transform:translateX(-50%);          /* 가로 가운데 */
-    width:min(38vmin,380px);              /* 살짝 키워도 중앙이라 안정적 */
+    width:min(38vmin,380px);
     height:min(38vmin,380px);
+    top:6%;
   }
 
-  /* 구름: 달을 중심으로 좌우 균형 */
+  /* 구름: 좌우 균형 + 화면 초과 방지 */
   .cloud{
     left:50%; top:22%;
-    transform:translateX(-70%);           /* 왼쪽 구름 역할 */
+    transform:translateX(-70%);
     width:78vw; height:clamp(120px,18vw,260px);
     opacity:.55;
   }
   .cloud.two{
     left:50%; top:30%;
-    transform:translateX(10%);            /* 오른쪽 구름 역할 */
+    transform:translateX(10%);
     width:70vw; height:clamp(110px,17vw,240px);
-    opacity:.45;
-    animation-duration:36s;
+    opacity:.45; animation-duration:36s;
   }
 
-  /* 토끼: 카드 위 중앙 정렬 */
+  /* 토끼/카드 중앙 정렬 */
   .card-wrap{flex-direction:column; align-items:center; gap:16px}
-  .rabbit{margin-top:4vh}                  /* 150px 고정값 대신 비율 사용 */
-  
-  /* 카드: 살짝 위로 올려 화면 하단 여백 확보 */
-  .card{margin-top:2vh}
+  .rabbit{margin-top:4vh; width:min(35vw, 180px)}
+  .card{width:90vw; margin-top:2vh}
 }
